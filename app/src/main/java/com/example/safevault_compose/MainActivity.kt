@@ -207,6 +207,56 @@ fun Auth_Calc() {
     }
 }
 
+@Composable
+fun Auth_Calc_FaceID() {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 32.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.Start
+    ) {
+        Spacer(modifier = Modifier.height(90.dp))
+
+        // Logo
+        Image(
+            painter = painterResource(id = R.drawable.logo_safe_vault_with_text),
+            contentDescription = "Logo",
+            modifier = Modifier
+                .width(164.dp)
+                .height(49.dp)
+                .align(Alignment.Start),
+            contentScale = ContentScale.Fit
+        )
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Text(
+            text = "Position your face in the camera frame",
+            style = TextStyle(
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+        )
+
+        Spacer(modifier = Modifier.height(111.dp))
+
+        Image(
+            painter = painterResource(id = R.drawable.face),
+            contentDescription = "face id icon",
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .width(136.dp)
+                .height(136.dp)
+                .align(Alignment.CenterHorizontally)
+        )
+    }
+}
+
 
 object Variables {
     val Grey: Color = Color(0xFF6C7278)
@@ -217,6 +267,6 @@ object Variables {
 @Composable
 fun GreetingPreview() {
     SafeVault_ComposeTheme {
-        Auth_Calc()
+        Auth_Calc_FaceID()
     }
 }
