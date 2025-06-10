@@ -20,10 +20,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,6 +41,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,7 +51,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             SafeVault_ComposeTheme {
-                Auth_Calc()
+                Calc()
                 }
             }
         }
@@ -210,9 +215,6 @@ fun Auth_Calc() {
 
 @Composable
 fun Auth_Calc_FaceID() {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -260,9 +262,6 @@ fun Auth_Calc_FaceID() {
 
 @Composable
 fun Auth_Calc_FingerPrint() {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -431,6 +430,204 @@ fun Auth_Calc_Combination() {
     }
 }
 
+@Composable
+fun Calc() {
+    var expression by remember { mutableStateOf("") }
+    var result by remember { mutableStateOf("") }
+    val historyList = remember { mutableStateListOf<Pair<String, String>>() }
+
+    val buttonColors = ButtonDefaults.buttonColors(
+        containerColor = Color.Transparent,
+        contentColor = Color(0xFFFF9800)
+    )
+
+    val numberButtonColors = ButtonDefaults.buttonColors(
+        containerColor = Color.Transparent,
+        contentColor = Color.Black
+    )
+
+    val buttons = listOf(
+        listOf("C", "⌫", "%", "÷"),
+        listOf("7", "8", "9", "×"),
+        listOf("4", "5", "6", "−"),
+        listOf("1", "2", "3", "+"),
+        listOf("🧮", "0", ".", "=")
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Bottom
+    ) {
+
+        // History (terbalik dari bawah ke atas)
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            reverseLayout = true
+        ) {
+            items(historyList.reversed()) { (exp, res) ->
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Text(
+                        text = exp,
+                        fontSize = 16.sp,
+                        color = Color.Gray
+                    )
+                    Text(
+                        text = "= $res",
+                        fontSize = 18.sp,
+                        color = Color.Gray
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
+            }
+        }
+
+        // Current expression and result
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            horizontalAlignment = Alignment.End
+        ) {
+            Text(text = expression, fontSize = 28.sp)
+            Text(text = if (result.isNotEmpty()) "= $result" else "", fontSize = 36.sp, fontWeight = FontWeight.Bold)
+        }
+
+        // Buttons
+        buttons.forEach { row ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                row.forEach { label ->
+                    val isOrange = label in listOf("C", "⌫", "%", "÷", "×", "−", "+", "=")
+                    val isIcon = label == "⌫" || label == "🧮"
+
+                    Button(
+                        onClick = {
+                            when (label) {
+                                "C" -> {
+                                    expression = ""
+                                    result = ""
+                                }
+                                "⌫" -> if (expression.isNotEmpty()) {
+                                    expression = expression.dropLast(1)
+                                }
+                                "=" -> {
+                                    result = evaluateExpression(expression)
+                                    if (result != "Error" && expression.isNotBlank()) {
+                                        historyList.add(expression to result)
+                                    }
+                                }
+                                "🧮" -> {
+                                    // Tambah aksi mode ilmiah di sini jika perlu
+                                }
+                                else -> expression += label
+                            }
+                        },
+                        modifier = Modifier.size(72.dp),
+                        shape = CircleShape,
+                        colors = if (isOrange) buttonColors else numberButtonColors,
+                        contentPadding = PaddingValues(0.dp)
+                    ) {
+                        when {
+                            label == "⌫" -> Image(
+                                painter = painterResource(id = R.drawable.delete),
+                                contentDescription = "Delete",
+                                modifier = Modifier.size(24.dp)
+                            )
+                            label == "🧮" -> Image(
+                                painter = painterResource(id = R.drawable.scientific),
+                                contentDescription = "Scientific",
+                                modifier = Modifier.size(24.dp)
+                            )
+                            else -> Text(text = label, fontSize = 24.sp)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+fun evaluateExpression(expression: String): String {
+    try {
+        val expr = expression
+            .replace("−", "-")
+            .replace("×", "*")
+            .replace("÷", "/")
+            .replace("%", "/100")
+
+        val tokens = expr.toCharArray()
+        val values = mutableListOf<Double>()
+        val ops = mutableListOf<Char>()
+
+        var i = 0
+        while (i < tokens.size) {
+            when {
+                tokens[i].isWhitespace() -> i++
+
+                tokens[i].isDigit() || tokens[i] == '.' -> {
+                    val sb = StringBuilder()
+                    while (i < tokens.size && (tokens[i].isDigit() || tokens[i] == '.')) {
+                        sb.append(tokens[i++])
+                    }
+                    values.add(sb.toString().toDouble())
+                }
+
+                tokens[i] in listOf('+', '-', '*', '/') -> {
+                    while (ops.isNotEmpty() && hasPrecedence(tokens[i], ops.last())) {
+                        val op = ops.removeAt(ops.size - 1)
+                        val b = values.removeAt(values.size - 1)
+                        val a = values.removeAt(values.size - 1)
+                        values.add(applyOp(op, b, a))
+                    }
+                    ops.add(tokens[i])
+                    i++
+                }
+
+                else -> return "Error"
+            }
+        }
+
+        while (ops.isNotEmpty()) {
+            val op = ops.removeAt(ops.size - 1)
+            val b = values.removeAt(values.size - 1)
+            val a = values.removeAt(values.size - 1)
+            values.add(applyOp(op, b, a))
+        }
+
+        val result = values.last()
+        return if (result % 1.0 == 0.0) "%,d".format(result.toLong()) else "%,.4f".format(result)
+
+    } catch (e: Exception) {
+        return "Error"
+    }
+}
+
+private fun hasPrecedence(op1: Char, op2: Char): Boolean {
+    if ((op1 == '*' || op1 == '/') && (op2 == '+' || op2 == '-')) return false
+    return true
+}
+
+private fun applyOp(op: Char, b: Double, a: Double): Double {
+    return when (op) {
+        '+' -> a + b
+        '-' -> a - b
+        '*' -> a * b
+        '/' -> if (b == 0.0) throw ArithmeticException("Divide by zero") else a / b
+        else -> 0.0
+    }
+}
+
+
 
 object Variables {
     val Grey: Color = Color(0xFF6C7278)
@@ -442,6 +639,6 @@ object Variables {
 @Composable
 fun GreetingPreview() {
     SafeVault_ComposeTheme {
-        Auth_Calc_Combination()
+        Calc()
     }
 }
