@@ -64,18 +64,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
-import androidx.compose.ui.platform.LocalContext
-import com.example.safevault_compose.ui.theme.Pink40
-import com.example.safevault_compose.ui.theme.Pink80
-import com.example.safevault_compose.ui.theme.Purple40
-import com.example.safevault_compose.ui.theme.Purple80
-import com.example.safevault_compose.ui.theme.PurpleGrey40
-import com.example.safevault_compose.ui.theme.PurpleGrey80
-import com.example.safevault_compose.ui.theme.Orange40
-import com.example.safevault_compose.ui.theme.Orange80
+import androidx.compose.material3.TextFieldDefaults
 
 
 class MainActivity : ComponentActivity() {
@@ -249,8 +238,24 @@ fun Auth_Calc() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Auth_Calc_FaceID() {
+    TopAppBar(
+        modifier = Modifier
+            .padding(top = 5.dp),
+        title = { Text("Label") },
+        navigationIcon = {
+            IconButton(onClick = { /* TODO: Back action */ }) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+            }
+        },
+        actions = {
+            IconButton(onClick = { /* TODO: Settings */ }) {
+                Icon(Icons.Default.Settings, contentDescription = "Settings")
+            }
+        }
+    )
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -259,14 +264,13 @@ fun Auth_Calc_FaceID() {
         horizontalAlignment = Alignment.Start
     ) {
         Spacer(modifier = Modifier.height(90.dp))
-
         // Logo
         Image(
             painter = painterResource(id = R.drawable.logo_safe_vault_with_text),
             contentDescription = "Logo",
             modifier = Modifier
-                .width(57.dp)
-                .height(57.dp)
+                .width(164.dp)
+                .height(49.dp)
                 .align(Alignment.Start),
             contentScale = ContentScale.Fit
         )
@@ -275,11 +279,9 @@ fun Auth_Calc_FaceID() {
 
         Text(
             text = "Position your face in the camera frame",
-            style = TextStyle(
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            fontSize = 32.sp,
         )
 
         Spacer(modifier = Modifier.height(111.dp))
@@ -296,8 +298,25 @@ fun Auth_Calc_FaceID() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Auth_Calc_FingerPrint() {
+    TopAppBar(
+        modifier = Modifier
+            .padding(top = 5.dp),
+        title = { Text("Label") },
+        navigationIcon = {
+            IconButton(onClick = { /* TODO: Back action */ }) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+            }
+        },
+        actions = {
+            IconButton(onClick = { /* TODO: Settings */ }) {
+                Icon(Icons.Default.Settings, contentDescription = "Settings")
+            }
+        }
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -322,11 +341,9 @@ fun Auth_Calc_FingerPrint() {
 
         Text(
             text = "Place your finger on the sensor",
-            style = TextStyle(
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            fontSize = 32.sp,
         )
 
         Spacer(modifier = Modifier.height(111.dp))
@@ -343,6 +360,7 @@ fun Auth_Calc_FingerPrint() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Auth_Calc_Combination() {
     var combination by remember { mutableStateOf("") }
@@ -355,6 +373,22 @@ fun Auth_Calc_Combination() {
         listOf("1", "2", "3", "+"),
         listOf("🧮", "0", ".", "=")
     )
+    TopAppBar(
+        modifier = Modifier
+            .padding(top = 5.dp),
+        title = { Text("Label") },
+        navigationIcon = {
+            IconButton(onClick = { /* TODO: Back action */ }) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+            }
+        },
+        actions = {
+            IconButton(onClick = { /* TODO: Settings */ }) {
+                Icon(Icons.Default.Settings, contentDescription = "Settings")
+            }
+        }
+    )
+
 
     Column(
         modifier = Modifier
@@ -380,32 +414,36 @@ fun Auth_Calc_Combination() {
 
         Text(
             text = "Enter your calculator combination to unlock SafeVault",
-            style = TextStyle(
-                fontSize = 32.sp,
-                lineHeight = 41.6.sp,
-                fontFamily = FontFamily.SansSerif,
-                fontWeight = FontWeight(700),
-                color = Variables.Black,
-            )
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            fontSize = 32.sp,
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(52.dp))
 
         // Display input
-        Box(
+        OutlinedTextField(
+            value = combination,
+            onValueChange = { /* tidak ada perubahan karena ini hanya tampilan */ },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .background(Color(0xFFF0F0F0), RoundedCornerShape(10.dp))
-                .padding(horizontal = 16.dp),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            Text(
-                text = combination,
+                .padding(start = 10.dp, end = 10.dp)
+            ,
+            textStyle = TextStyle(
                 fontSize = 20.sp,
-                color = Color.Black
+                color = MaterialTheme.colorScheme.onTertiary,
+            ),
+            readOnly = true,
+            label = { Text("Combination") }, // opsional
+            shape = RoundedCornerShape(10.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color.Gray,
+                unfocusedBorderColor = Color.LightGray,
+                disabledBorderColor = Color.LightGray
             )
-        }
+        )
+
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -455,7 +493,7 @@ fun Auth_Calc_Combination() {
                                 else -> Text(
                                     text = label,
                                     fontSize = 20.sp,
-                                    color = if (isOperator) Color(0xFFEF7303) else Color.Black
+                                    color = if (isOperator) MaterialTheme.colorScheme.primary else Color.Black
                                 )
                             }
                         }
@@ -702,17 +740,21 @@ fun Notes() {
                 placeholder = { Text("Search note") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp)),
+                    .shadow(2.dp, RoundedCornerShape(30.dp))
+                    .background(Color(0xFFFFFFFF), RoundedCornerShape(30.dp))
+                    .border(1.dp, Variables.Stroke, RoundedCornerShape(30.dp)),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color(0xFFF4EFF4),
-                    unfocusedContainerColor = Color(0xFFF4EFF4)
+                    focusedContainerColor = MaterialTheme.colorScheme.onTertiary,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary
                 )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Chips Row
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 items(labels) { label ->
                     FilterChip(
                         selected = selectedLabel == label,
@@ -769,6 +811,6 @@ object Variables {
 @Composable
 fun GreetingPreview() {
     SafeVault_ComposeTheme(dynamicColor = false) {
-        Auth_Calc()
+        Auth_Calc_Combination()
     }
 }
