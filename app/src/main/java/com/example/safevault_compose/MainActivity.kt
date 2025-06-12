@@ -68,6 +68,9 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.CheckBox
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Fingerprint
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -75,9 +78,12 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.foundation.layout.FlowRow
 import kotlin.math.round
 
 
@@ -925,6 +931,88 @@ fun Notes_Detail() {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@Composable
+fun Setting() {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Setting") },
+                navigationIcon = {
+                    IconButton(onClick = { /* TODO: Back action */ }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = Color.Black
+                )
+            )
+        },
+        content = { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                Spacer(modifier = Modifier.height(32.dp))
+                Text(
+                    text = "SECURITY SETTINGS",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    SecurityOption("FaceID", Icons.Default.Face)
+                    SecurityOption("Fingerprint", Icons.Default.Fingerprint)
+                    SecurityOption("Calculator Combination", Icons.Default.Lock)
+                }
+
+            }
+        }
+    )
+}
+
+@Composable
+fun SecurityOption(label: String, icon: ImageVector) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.tertiary,
+        tonalElevation = 4.dp,
+        modifier = Modifier
+            .widthIn(min = 150.dp)
+            .height(60.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable { /* TODO: Action */ }
+                .padding(horizontal = 12.dp)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                tint = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.size(20.dp),
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = label, color = MaterialTheme.colorScheme.secondary)
+
+        }
+    }
+}
+
+fun Setting_FaceID () {
+
+}
 
 object Variables {
     val Grey: Color = Color(0xFF6C7278)
@@ -939,6 +1027,6 @@ object Variables {
 @Composable
 fun GreetingPreview() {
     SafeVault_ComposeTheme(dynamicColor = false) {
-        Notes_Detail()
+        Setting()
     }
 }
