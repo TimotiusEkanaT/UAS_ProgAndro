@@ -1,7 +1,6 @@
 package com.example.safevault_compose
 
-import android.graphics.fonts.Font
-import android.os.Build
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,41 +13,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import com.example.safevault_compose.ui.theme.SafeVault_ComposeTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -58,28 +36,215 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 
+import androidx.compose.material3.*
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack // For back arrow
+import androidx.compose.material.icons.filled.MoreVert // For more options icon
+
+//fab
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+
+//last
+
+
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.ui.text.style.TextAlign
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            SafeVault_ComposeTheme(dynamicColor = false) {
-                Calc()
-                }
+            SafeVault_ComposeTheme {
+                Auth_Calc()
+                Auth_Calc_FaceID()
             }
         }
     }
+}
+
 
 @Composable
+@Preview(showBackground = true)
 fun Auth_Calc() {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 32.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.Start
+    ) {
+        Spacer(modifier = Modifier.height(90.dp))
+        Image(
+            painter = painterResource(id = R.drawable.logo_safe_vault_with_text),
+            contentDescription = "Logo",
+            modifier = Modifier
+                .width(164.dp)
+                .height(49.dp)
+                .background(Color.White, RoundedCornerShape(10.dp))
+                .align(Alignment.CenterHorizontally),
+            contentScale = ContentScale.Fit
+        )
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Text(
+            text = "Sign in to your Account",
+            style = TextStyle(
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            text = "Enter your email and password to log in",
+            fontSize = 15.sp,
+            color = Color.Gray
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Email Field
+        Text(text = "Email", color = Variables.Grey, fontSize = 15.sp)
+        TextField(
+            value = email,
+            onValueChange = { email = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .shadow(2.dp, RoundedCornerShape(10.dp))
+                .background(Color(0xFFFFFFFF), RoundedCornerShape(10.dp))
+                .border(1.dp, Variables.Stroke, RoundedCornerShape(10.dp)),
+            placeholder = { Text("Enter email") }
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Password Field
+        Text(text = "Password", color = Variables.Grey, fontSize = 15.sp)
+        TextField(
+            value = password,
+            onValueChange = { password = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .shadow(2.dp, RoundedCornerShape(10.dp))
+                .background(Color.White, RoundedCornerShape(10.dp))
+                .border(1.dp, Variables.Stroke, RoundedCornerShape(10.dp)),
+            placeholder = { Text("Enter password") },
+            visualTransformation = PasswordVisualTransformation()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "Forgot Password?",
+            color = Color(0xFFEF7303),
+            modifier = Modifier
+                .align(Alignment.End)
+                .clickable {
+                    // TODO: Tambahkan aksi, misalnya navigasi ke halaman reset password
+                    println("Forgot Password clicked") // bisa diganti dengan navigasi
+                }
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Log In Button
+        Button(
+            //TODO: Tambahkan fungsi login
+            onClick = { /* login logic */ },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF7303))
+        ) {
+            Text("Log In")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Or Divider
+        Text("Or", color = Color.Gray, modifier = Modifier.align(Alignment.CenterHorizontally))
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Google Button
+        Button(
+            //TODO: Tambahkan fungsi login Google
+            onClick = { /* Google login */ },
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    1.dp,
+                    Color(alpha = 0.2f, red = 0.5f, green = 0.5f, blue = 0.5f),
+                    RoundedCornerShape(10.dp)
+                )
+                .height(48.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.google_logo),
+                contentDescription = "Google Logo",
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(end = 8.dp)
+            )
+            Text("Continue with Google", color = Color.Black)
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Facebook Button
+        Button(
+            //TODO: Tambahkan fungsi login Facebook
+            onClick = { /* Facebook login */ },
+            modifier = Modifier
+                .border(
+                    1.dp,
+                    Color(alpha = 0.2f, red = 0.5f, green = 0.5f, blue = 0.5f),
+                    RoundedCornerShape(10.dp)
+                )
+                .fillMaxWidth()
+                .height(48.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.facebook_logo),
+                contentDescription = "Facebook Logo",
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(end = 8.dp)
+            )
+            Text("Continue with Facebook", color = Color.Black)
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun Auth_Calc_FaceID() {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -106,182 +271,12 @@ fun Auth_Calc() {
         Spacer(modifier = Modifier.height(40.dp))
 
         Text(
-            text = "Sign in to your Account",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            fontSize = 32.sp,
-            lineHeight = 41.6.sp
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Text(
-            text = "Enter your email and password to log in",
-            fontSize = 15.sp,
-            color = Color.Gray,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        // Email Field
-        Text(text = "Email",
-            color = Variables.Grey,
-            fontSize = 15.sp,
-            style = MaterialTheme.typography.labelMedium
-        )
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .shadow(2.dp, RoundedCornerShape(10.dp))
-                .background( Color(0xFFFFFFFF), RoundedCornerShape(10.dp))
-                .border(1.dp, Variables.Stroke, RoundedCornerShape(10.dp)),
-            placeholder = { Text("Enter email") },
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Password Field
-        Text(text = "Password", color = Variables.Grey, fontSize = 15.sp,style = MaterialTheme.typography.labelMedium)
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .shadow(2.dp, RoundedCornerShape(10.dp))
-                .background(Color.White, RoundedCornerShape(10.dp))
-                .border(1.dp, Variables.Stroke, RoundedCornerShape(10.dp)),
-            placeholder = { Text("Enter password") },
-            visualTransformation = PasswordVisualTransformation()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "Forgot Password?",
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .align(Alignment.End)
-                .clickable {
-                    // TODO: Tambahkan aksi, misalnya navigasi ke halaman reset password
-                    println("Forgot Password clicked") // bisa diganti dengan navigasi
-                }
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Log In Button
-        Button(
-            //TODO: Tambahkan fungsi login
-            onClick = { /* login logic */ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-        ) {
-            Text("Log In")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Or Divider
-        Text("Or", color = Color.Gray, modifier = Modifier.align(Alignment.CenterHorizontally))
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Google Button
-        OutlinedButton(
-            //TODO: Tambahkan fungsi login Google
-            onClick = { /* Google login */ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-            ,
-            colors = ButtonDefaults.buttonColors(containerColor = Color.White)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.google_logo),
-                contentDescription = "Google Logo",
-                modifier = Modifier
-                    .size(24.dp)
-                    .padding(end = 8.dp)
-            )
-            Text("Continue with Google", color = Color.Black)
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Facebook Button
-        OutlinedButton(
-            //TODO: Tambahkan fungsi login Facebook
-            onClick = { /* Facebook login */ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.facebook_logo),
-                contentDescription = "Facebook Logo",
-                modifier = Modifier
-                    .size(24.dp)
-                    .padding(end = 8.dp)
-            )
-            Text("Continue with Facebook", color = Color.Black)
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun Auth_Calc_FaceID() {
-    TopAppBar(
-        modifier = Modifier
-            .padding(top = 5.dp),
-        title = { Text("Label") },
-        navigationIcon = {
-            IconButton(onClick = { /* TODO: Back action */ }) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-            }
-        },
-        actions = {
-            IconButton(onClick = { /* TODO: Settings */ }) {
-                Icon(Icons.Default.Settings, contentDescription = "Settings")
-            }
-        }
-    )
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 32.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.Start
-    ) {
-        Spacer(modifier = Modifier.height(90.dp))
-        // Logo
-        Image(
-            painter = painterResource(id = R.drawable.logo_safe_vault_with_text),
-            contentDescription = "Logo",
-            modifier = Modifier
-                .width(164.dp)
-                .height(49.dp)
-                .align(Alignment.Start),
-            contentScale = ContentScale.Fit
-        )
-
-        Spacer(modifier = Modifier.height(40.dp))
-
-        Text(
             text = "Position your face in the camera frame",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            fontSize = 32.sp,
+            style = TextStyle(
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
         )
 
         Spacer(modifier = Modifier.height(111.dp))
@@ -298,24 +293,10 @@ fun Auth_Calc_FaceID() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Auth_Calc_FingerPrint() {
-    TopAppBar(
-        modifier = Modifier
-            .padding(top = 5.dp),
-        title = { Text("Label") },
-        navigationIcon = {
-            IconButton(onClick = { /* TODO: Back action */ }) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-            }
-        },
-        actions = {
-            IconButton(onClick = { /* TODO: Settings */ }) {
-                Icon(Icons.Default.Settings, contentDescription = "Settings")
-            }
-        }
-    )
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -341,9 +322,11 @@ fun Auth_Calc_FingerPrint() {
 
         Text(
             text = "Place your finger on the sensor",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            fontSize = 32.sp,
+            style = TextStyle(
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
         )
 
         Spacer(modifier = Modifier.height(111.dp))
@@ -360,366 +343,153 @@ fun Auth_Calc_FingerPrint() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+object Variables {
+    val Grey: Color = Color(0xFF6C7278)
+    val Stroke: Color = Color(0xFFEDF1F3)
+}
+
+@Preview(showBackground = true)
 @Composable
-fun Auth_Calc_Combination() {
-    var combination by remember { mutableStateOf("") }
-
-    val buttonSize = 72.dp
-    val calcButtons = listOf(
-        listOf("C", "⌫", "%", "÷"),
-        listOf("7", "8", "9", "×"),
-        listOf("4", "5", "6", "−"),
-        listOf("1", "2", "3", "+"),
-        listOf("🧮", "0", ".", "=")
-    )
-    TopAppBar(
-        modifier = Modifier
-            .padding(top = 5.dp),
-        title = { Text("Label") },
-        navigationIcon = {
-            IconButton(onClick = { /* TODO: Back action */ }) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-            }
-        },
-        actions = {
-            IconButton(onClick = { /* TODO: Settings */ }) {
-                Icon(Icons.Default.Settings, contentDescription = "Settings")
-            }
-        }
-    )
-
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.Start
-    ) {
-        Spacer(modifier = Modifier.height(60.dp))
-
-        // Logo
-        Image(
-            painter = painterResource(id = R.drawable.logo_safe_vault_with_text),
-            contentDescription = "Logo",
-            modifier = Modifier
-                .width(160.dp)
-                .height(48.dp)
-            ,
-            contentScale = ContentScale.Fit
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Text(
-            text = "Enter your calculator combination to unlock SafeVault",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            fontSize = 32.sp,
-        )
-
-        Spacer(modifier = Modifier.height(52.dp))
-
-        // Display input
-        OutlinedTextField(
-            value = combination,
-            onValueChange = { /* tidak ada perubahan karena ini hanya tampilan */ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .padding(start = 10.dp, end = 10.dp)
-            ,
-            textStyle = TextStyle(
-                fontSize = 20.sp,
-                color = MaterialTheme.colorScheme.onTertiary,
-            ),
-            readOnly = true,
-            label = { Text("Combination") }, // opsional
-            shape = RoundedCornerShape(10.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color.Gray,
-                unfocusedBorderColor = Color.LightGray,
-                disabledBorderColor = Color.LightGray
-            )
-        )
-
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Grid kalkulator
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            calcButtons.forEach { row ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    row.forEach { label ->
-                        val isOperator = label in listOf("÷", "×", "−", "+", "=", "C", "%")
-                        Button(
-                            onClick = {
-                                when (label) {
-                                    "C" -> combination = ""
-                                    "⌫" -> if (combination.isNotEmpty()) combination = combination.dropLast(1)
-                                    "=" -> {
-                                        // TODO: Validasi kombinasi
-                                    }
-                                    "🧮" -> {
-                                        // TODO: Ganti ke scientific calculator
-                                    }
-                                    else -> if (combination.length < 12) combination += label
-                                }
-                            },
-                            modifier = Modifier.size(buttonSize),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isOperator) Color.White else Color.White
-                            ),
-                            shape = CircleShape,
-                            contentPadding = PaddingValues(0.dp)
-                        ) {
-                            when (label) {
-                                "⌫" -> Image(
-                                    painter = painterResource(id = R.drawable.delete),
-                                    contentDescription = "Delete",
-                                    modifier = Modifier.size(20.dp),
-                                    contentScale = ContentScale.Fit
-
-                                )
-                                "🧮" -> Image(
-                                    painter = painterResource(id = R.drawable.scientific),
-                                    contentDescription = "Scientific",
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                else -> Text(
-                                    text = label,
-                                    fontSize = 20.sp,
-                                    color = if (isOperator) MaterialTheme.colorScheme.primary else Color.Black
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
+fun Aunt_Calc() {
+    SafeVault_ComposeTheme {
+        Auth_Calc_FingerPrint()
     }
 }
 
+
+//last
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Calc() {
-    var expression by remember { mutableStateOf("") }
-    var result by remember { mutableStateOf("") }
-    val historyList = remember { mutableStateListOf<Pair<String, String>>() }
-
-    val buttonColors = ButtonDefaults.buttonColors(
-        containerColor = Color.Transparent,
-        contentColor = Color(0xFFFF9800)
-    )
-
-    val numberButtonColors = ButtonDefaults.buttonColors(
-        containerColor = Color.Transparent,
-        contentColor = Color.Black
-    )
-
-    val buttons = listOf(
-        listOf("C", "⌫", "%", "÷"),
-        listOf("7", "8", "9", "×"),
-        listOf("4", "5", "6", "−"),
-        listOf("1", "2", "3", "+"),
-        listOf("🧮", "0", ".", "=")
-    )
+@Preview
+fun SafeVaultSettingsScreen() {
+    var combinations by remember {
+        mutableStateOf(
+            listOf("Combination 1", "Combination 2", "Add calculator combination")
+        )
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color(0xFFFFFFFF)) // <== Pindah ke atas padding
             .padding(16.dp),
-        verticalArrangement = Arrangement.Bottom
+        horizontalAlignment = Alignment.Start
+    )
+    {
+        TopAppBar(
+            title = {
+                Text("Setting", color = Color.Black)
+            },
+            navigationIcon = {
+                IconButton(onClick = { /* Handle back */ }) {
+                    Image(
+                        painter = painterResource(id = R.drawable.arrow_back), // Ganti sesuai drawable
+                        contentDescription = "Back",
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+//            Icon(Icons.Filled.Lock
+//                , contentDescription = null)
+//            Spacer(modifier = Modifier.width(15.dp))
+
+            Image(
+                painter = painterResource(id = R.drawable.lock),
+                contentDescription = "face id icon",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .width(40.dp)
+                    .height(40.dp)
+                    .padding(5.dp)
+            )
+
+            Text(
+                text = "CALCULATOR COMBINATION",
+                color = Color.Gray,
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        CombinationList(combinations)
+
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 8.dp),
+            thickness = 1.dp,
+            color = Color.Gray
+        )
+    }
+}
+
+@Composable
+fun CombinationList(combinations: List<String>) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        combinations.forEach { item ->
+            val showArrow = item != "Add calculator combination"
+            CombinationItem(item = item, showArrow = showArrow)
+        }
+    }
+}
 
-        // History (terbalik dari bawah ke atas)
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            reverseLayout = true
+@Composable
+fun CombinationItem(item: String, showArrow: Boolean) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { /* Handle item click */ }
+            .padding(vertical = 4.dp),
+        shape = RoundedCornerShape(10.dp),
+        color = Color(0xFFFFFFFF)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            items(historyList.reversed()) { (exp, res) ->
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.End
-                ) {
-                    Text(
-                        text = exp,
-                        fontSize = 16.sp,
-                        color = Color.Gray
-                    )
-                    Text(
-                        text = "= $res",
-                        fontSize = 18.sp,
-                        color = Color.Gray
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                }
-            }
-        }
-
-        // Current expression and result
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            horizontalAlignment = Alignment.End
-        ) {
-            Text(text = expression, fontSize = 28.sp)
-            Text(text = if (result.isNotEmpty()) "= $result" else "", fontSize = 36.sp, fontWeight = FontWeight.Bold)
-        }
-
-        // Buttons
-        buttons.forEach { row ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                row.forEach { label ->
-                    val isOrange = label in listOf("C", "⌫", "%", "÷", "×", "−", "+", "=")
-                    val isIcon = label == "⌫" || label == "🧮"
-
-                    Button(
-                        onClick = {
-                            when (label) {
-                                "C" -> {
-                                    expression = ""
-                                    result = ""
-                                }
-                                "⌫" -> if (expression.isNotEmpty()) {
-                                    expression = expression.dropLast(1)
-                                }
-                                "=" -> {
-                                    result = evaluateExpression(expression)
-                                    if (result != "Error" && expression.isNotBlank()) {
-                                        historyList.add(expression to result)
-                                    }
-                                }
-                                "🧮" -> {
-                                    // Tambah aksi mode ilmiah di sini jika perlu
-                                }
-                                else -> expression += label
-                            }
-                        },
-                        modifier = Modifier.size(72.dp),
-                        shape = CircleShape,
-                        colors = if (isOrange) buttonColors else numberButtonColors,
-                        contentPadding = PaddingValues(0.dp)
-                    ) {
-                        when {
-                            label == "⌫" -> Image(
-                                painter = painterResource(id = R.drawable.delete),
-                                contentDescription = "Delete",
-                                modifier = Modifier.size(24.dp)
-                            )
-                            label == "🧮" -> Image(
-                                painter = painterResource(id = R.drawable.scientific),
-                                contentDescription = "Scientific",
-                                modifier = Modifier.size(24.dp)
-                            )
-                            else -> Text(text = label, fontSize = 24.sp)
-                        }
-                    }
-                }
+            Text(
+                text = item,
+                color = Color.Black,
+                fontSize = 16.sp
+            )
+            if (showArrow) {
+                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
             }
         }
     }
 }
 
 
-fun evaluateExpression(expression: String): String {
-    try {
-        val expr = expression
-            .replace("−", "-")
-            .replace("×", "*")
-            .replace("÷", "/")
-            .replace("%", "/100")
-
-        val tokens = expr.toCharArray()
-        val values = mutableListOf<Double>()
-        val ops = mutableListOf<Char>()
-
-        var i = 0
-        while (i < tokens.size) {
-            when {
-                tokens[i].isWhitespace() -> i++
-
-                tokens[i].isDigit() || tokens[i] == '.' -> {
-                    val sb = StringBuilder()
-                    while (i < tokens.size && (tokens[i].isDigit() || tokens[i] == '.')) {
-                        sb.append(tokens[i++])
-                    }
-                    values.add(sb.toString().toDouble())
-                }
-
-                tokens[i] in listOf('+', '-', '*', '/') -> {
-                    while (ops.isNotEmpty() && hasPrecedence(tokens[i], ops.last())) {
-                        val op = ops.removeAt(ops.size - 1)
-                        val b = values.removeAt(values.size - 1)
-                        val a = values.removeAt(values.size - 1)
-                        values.add(applyOp(op, b, a))
-                    }
-                    ops.add(tokens[i])
-                    i++
-                }
-
-                else -> return "Error"
-            }
-        }
-
-        while (ops.isNotEmpty()) {
-            val op = ops.removeAt(ops.size - 1)
-            val b = values.removeAt(values.size - 1)
-            val a = values.removeAt(values.size - 1)
-            values.add(applyOp(op, b, a))
-        }
-
-        val result = values.last()
-        return if (result % 1.0 == 0.0) "%,d".format(result.toLong()) else "%,.4f".format(result)
-
-    } catch (e: Exception) {
-        return "Error"
-    }
-}
-
-private fun hasPrecedence(op1: Char, op2: Char): Boolean {
-    if ((op1 == '*' || op1 == '/') && (op2 == '+' || op2 == '-')) return false
-    return true
-}
-
-private fun applyOp(op: Char, b: Double, a: Double): Double {
-    return when (op) {
-        '+' -> a + b
-        '-' -> a - b
-        '*' -> a * b
-        '/' -> if (b == 0.0) throw ArithmeticException("Divide by zero") else a / b
-        else -> 0.0
-    }
-}
+//Combination - Calc
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Notes() {
-    var searchQuery by remember { mutableStateOf("") }
-    val labels = listOf("Label", "Label", "Label", "Label", "Label", "Label")
-    var selectedLabel by remember { mutableStateOf(labels[0]) }
+fun CombinationInputScreen(
+    onBackClick: () -> Unit = {}
+) {
+    var combination by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Label") },
+                title = { Text(text = "Setting") },
                 navigationIcon = {
-                    IconButton(onClick = { /* TODO: Back action */ }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* TODO: Settings */ }) {
-                        Icon(Icons.Default.Settings, contentDescription = "Settings")
+                    IconButton(onClick = onBackClick) {
+                        Image(
+                            painter = painterResource(id = R.drawable.arrow_back),
+                            contentDescription = "Go back",
+                            modifier = Modifier.size(56.dp),
+                        )
                     }
                 }
             )
@@ -728,89 +498,43 @@ fun Notes() {
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(16.dp)
+                .padding(horizontal = 24.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Search Bar
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                leadingIcon = {
-                    Icon(Icons.Default.Search, contentDescription = null)
-                },
-                placeholder = { Text("Search note") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .shadow(2.dp, RoundedCornerShape(30.dp))
-                    .background(Color(0xFFFFFFFF), RoundedCornerShape(30.dp))
-                    .border(1.dp, Variables.Stroke, RoundedCornerShape(30.dp)),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.onTertiary,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary
-                )
+            Spacer(modifier = Modifier.height(64.dp))
+            Text(
+                text = "Enter your calculator combination to unlock SafeVault",
+                fontSize = 30.sp,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Chips Row
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(labels) { label ->
-                    FilterChip(
-                        selected = selectedLabel == label,
-                        onClick = { selectedLabel = label },
-                        label = { Text(label) }
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // List of Items
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(10) {
-                    ListItem(
-                        headlineContent = { Text("List item") },
-                        supportingContent = {
-                            Text("Supporting line text lorem ipsum dolor sit amet, consectetur.",
-                                modifier = Modifier
-                                    .width(268.dp)
-                                    .height(40.dp))
-                        },
-                        leadingContent = {
-                            Image(
-                                painter = painterResource(id = R.drawable.image_icon),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(56.dp)
-                                    .clip(CircleShape)
+            Spacer(modifier = Modifier.height(32.dp))
+            OutlinedTextField(
+                value = combination,
+                onValueChange = { combination = it },
+                placeholder = { Text(text = "Input your combination") },
+                trailingIcon = {
+                    if (combination.isNotEmpty()) {
+                        IconButton(onClick = { combination = "" }) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Clear text"
                             )
-                        },
-                        trailingContent = {
-                            IconButton(onClick = { /* TODO */ }) {
-                                Icon(Icons.Default.MoreVert, contentDescription = "Menu")
-                            }
                         }
-                    )
-                }
-            }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }
 
-object Variables {
-    val Grey: Color = Color(0xFF6C7278)
-    val Black: Color = Color(0xFF1A1C1E)
-    val Stroke: Color = Color(0xFFEDF1F3)
-    val StaticTitleLargeSize = 22.sp
-    val StaticTitleLargeLineHeight = 28.sp
-    val SchemesOnSurface: Color = Color(0xFF1D1B20)
-}
-
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun GreetingPreview() {
-    SafeVault_ComposeTheme(dynamicColor = false) {
-        Auth_Calc_Combination()
+fun CombinationInputScreenPreview() {
+    SafeVault_ComposeTheme {
+        CombinationInputScreen()
     }
 }
