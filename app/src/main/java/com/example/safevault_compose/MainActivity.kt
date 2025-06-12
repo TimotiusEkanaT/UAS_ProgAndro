@@ -84,6 +84,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.materialIcon
+import androidx.compose.material3.Divider
 import kotlin.math.round
 
 
@@ -1010,9 +1013,179 @@ fun SecurityOption(label: String, icon: ImageVector) {
     }
 }
 
-fun Setting_FaceID () {
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Setting_FaceID() {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Setting") },
+                navigationIcon = {
+                    IconButton(onClick = { /* TODO: Back action */ }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        },
 
+        content = { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                    .fillMaxSize()
+            ) {
+                Spacer(modifier = Modifier.height(32.dp))
+                // Label + Icon
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Face,
+                        contentDescription = "Face ID Icon",
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = "FACE DATA",
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 24.sp
+                        )
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Face list
+                FaceDataItem("Face 1")
+                FaceDataItem("Face 2")
+
+                Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+                Text(
+                    text = "Add face data",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { /* TODO: Add new face data */ }
+                        .padding(vertical = 16.dp)
+                )
+            }
+        }
+    )
 }
+
+@Composable
+fun FaceDataItem(name: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { /* TODO: Navigate or show details */ }
+            .padding(vertical = 16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = name,
+            style = MaterialTheme.typography.bodyLarge
+        )
+        Icon(
+            imageVector = Icons.Default.ChevronRight,
+            contentDescription = "More"
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Setting_FaceID_Submenu() {
+    var faceName by remember { mutableStateOf("Face 1") }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Setting") },
+                navigationIcon = {
+                    IconButton(onClick = { /* TODO: Back */ }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        },
+        content = { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.Start
+            ) {
+                // Header label
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Face, // Ganti jika punya ikon khusus
+                        contentDescription = "Face ID Icon",
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "FACE DATA",
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 24.sp,
+                        )
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Icon wajah besar
+                Icon(
+                    imageVector = Icons.Default.Face,
+                    contentDescription = "User Face Icon",
+                    modifier = Modifier
+                        .size(160.dp)
+                        .padding(16.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Field nama face
+                OutlinedTextField(
+                    value = faceName,
+                    onValueChange = { faceName = it },
+                    label = { Text("Name") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.CenterHorizontally)
+
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                // Tombol hapus
+                Button(
+                    onClick = { /* TODO: Delete face data */ },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiary
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp)
+                        .height(48.dp),
+                    shape = RoundedCornerShape(24.dp)
+                ) {
+                    Text(
+                        text = "Delete face data",
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+
+            }
+        }
+    )
+}
+
 
 object Variables {
     val Grey: Color = Color(0xFF6C7278)
@@ -1027,6 +1200,6 @@ object Variables {
 @Composable
 fun GreetingPreview() {
     SafeVault_ComposeTheme(dynamicColor = false) {
-        Setting()
+        Setting_FaceID_Submenu()
     }
 }
