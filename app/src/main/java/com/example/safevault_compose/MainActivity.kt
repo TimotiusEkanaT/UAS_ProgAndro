@@ -6,6 +6,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -62,9 +64,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AttachFile
+import androidx.compose.material.icons.filled.CheckBox
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.Photo
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import kotlin.math.round
 
 
 class MainActivity : ComponentActivity() {
@@ -798,6 +812,120 @@ fun Notes() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@Composable
+fun Notes_Detail() {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
+
+    var noteText by remember { mutableStateOf("") }
+    var showFabMenu by remember { mutableStateOf(false) }
+
+    val fabItems = listOf(
+        "Voice Note" to Icons.Default.Mic,
+        "Photo" to Icons.Default.Photo,
+        "Checkboxes" to Icons.Default.CheckBox
+    )
+
+    val keyboardVisible = WindowInsets.isImeVisible
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Title") },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        focusManager.clearFocus()
+                        keyboardController?.hide()
+                    }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        },
+        floatingActionButton = {
+            Column(horizontalAlignment = Alignment.End) {
+                AnimatedVisibility(visible = showFabMenu) {
+                    Column {
+                        fabItems.forEach { (label, icon) ->
+                            ExtendedFloatingActionButton(
+                                text = { Text(label) },
+                                icon = { Icon(icon, contentDescription = label) },
+                                onClick = { /* TODO: Handle action */ },
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                        }
+                    }
+                }
+
+                FloatingActionButton(
+                    onClick = { showFabMenu = !showFabMenu },
+                    containerColor = MaterialTheme.colorScheme.secondary
+                ) {
+                    Icon(
+                        imageVector = if (showFabMenu) Icons.Default.Close else Icons.Default.AttachFile,
+                        contentDescription = "Menu"
+                    )
+                }
+            }
+        },
+        bottomBar = {
+            if (!keyboardVisible) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Button(
+                        onClick = { /* Save logic */ },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
+                        )
+                    ) {
+                        Text("Save")
+                    }
+
+                    OutlinedButton(
+                        onClick = { /* Cancel logic */ },
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colorScheme.secondary
+                        ),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary)
+                    ) {
+                        Text("Cancel")
+                    }
+                }
+            }
+        }
+,
+        content = { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(16.dp)
+            ) {
+                TextField(
+                    value = noteText,
+                    onValueChange = { noteText = it },
+                    placeholder = { Text("Start writing your note...") },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Transparent)
+                        .weight(1f),
+                    singleLine = false,
+//                    shape = RoundedCornerShape(16.dp),
+                    maxLines = Int.MAX_VALUE
+                )
+            }
+        }
+    )
+}
+
+
 object Variables {
     val Grey: Color = Color(0xFF6C7278)
     val Black: Color = Color(0xFF1A1C1E)
@@ -811,6 +939,6 @@ object Variables {
 @Composable
 fun GreetingPreview() {
     SafeVault_ComposeTheme(dynamicColor = false) {
-        Auth_Calc_Combination()
+        Notes_Detail()
     }
 }
