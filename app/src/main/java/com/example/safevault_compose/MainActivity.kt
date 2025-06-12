@@ -1180,11 +1180,271 @@ fun Setting_FaceID_Submenu() {
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
-
             }
         }
     )
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Setting_FaceID_Auth() {
+    TopAppBar(
+        modifier = Modifier
+            .padding(top = 5.dp),
+        title = { Text("Setting") },
+        navigationIcon = {
+            IconButton(onClick = { /* TODO: Back action */ }) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+            }
+        },
+//        actions = {
+//            IconButton(onClick = { /* TODO: Settings */ }) {
+//                Icon(Icons.Default.Settings, contentDescription = "Settings")
+//            }
+//        }
+    )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 32.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.Start
+    ) {
+        Spacer(modifier = Modifier.height(90.dp))
+        // Logo
+        Image(
+            painter = painterResource(id = R.drawable.logo_safe_vault_with_text),
+            contentDescription = "Logo",
+            modifier = Modifier
+                .width(164.dp)
+                .height(49.dp)
+                .align(Alignment.Start),
+            contentScale = ContentScale.Fit
+        )
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Text(
+            text = "Position your face in the camera frame",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            fontSize = 32.sp,
+        )
+
+        Spacer(modifier = Modifier.height(111.dp))
+
+        Image(
+            painter = painterResource(id = R.drawable.face),
+            contentDescription = "face id icon",
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .width(136.dp)
+                .height(136.dp)
+                .align(Alignment.CenterHorizontally)
+        )
+    }
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Setting_Fingerprint() {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Setting") },
+                navigationIcon = {
+                    IconButton(onClick = { /* TODO: Back action */ }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        },
+        content = { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                    .fillMaxSize()
+            ) {
+                Spacer(modifier = Modifier.height(32.dp))
+                // Label + Icon
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Fingerprint, // diganti
+                        contentDescription = "Fingerprint Icon",
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = "FINGERPRINT DATA", // diganti
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 24.sp
+                        )
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                FaceDataItem("Thumb")
+                FaceDataItem("Forefinger")
+
+                Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+                Text(
+                    text = "Add fingerprint data", // diganti
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { /* TODO: Add new fingerprint data */ }
+                        .padding(vertical = 16.dp)
+                )
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Setting_Fingerprint_Submenu() {
+    var fingerName by remember { mutableStateOf("Thumb") }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Setting") },
+                navigationIcon = {
+                    IconButton(onClick = { /* TODO: Back */ }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        },
+        content = { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Fingerprint, // diganti
+                        contentDescription = "Fingerprint Icon",
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "FINGERPRINT DATA", // diganti
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 24.sp,
+                        )
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Icon(
+                    imageVector = Icons.Default.Fingerprint, // diganti
+                    contentDescription = "Fingerprint Icon",
+                    modifier = Modifier
+                        .size(160.dp)
+                        .padding(16.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = fingerName,
+                    onValueChange = { fingerName = it },
+                    label = { Text("Name") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.CenterHorizontally)
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Button(
+                    onClick = { /* TODO: Delete fingerprint data */ },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiary
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp)
+                        .height(48.dp),
+                    shape = RoundedCornerShape(24.dp)
+                ) {
+                    Text(
+                        text = "Delete fingerprint data", // diganti
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Setting_Fingerprint_Auth() {
+    TopAppBar(
+        modifier = Modifier.padding(top = 5.dp),
+        title = { Text("Setting") },
+        navigationIcon = {
+            IconButton(onClick = { /* TODO: Back action */ }) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+            }
+        }
+    )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 32.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.Start
+    ) {
+        Spacer(modifier = Modifier.height(90.dp))
+
+        Image(
+            painter = painterResource(id = R.drawable.logo_safe_vault_with_text),
+            contentDescription = "Logo",
+            modifier = Modifier
+                .width(164.dp)
+                .height(49.dp)
+                .align(Alignment.Start),
+            contentScale = ContentScale.Fit
+        )
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Text(
+            text = "Place your finger on the sensor", // diganti
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            fontSize = 32.sp,
+        )
+
+        Spacer(modifier = Modifier.height(111.dp))
+
+        Image(
+            painter = painterResource(id = R.drawable.fingerprint), // ganti gambar fingerprint
+            contentDescription = "Fingerprint Icon",
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .width(136.dp)
+                .height(136.dp)
+                .align(Alignment.CenterHorizontally)
+        )
+    }
+}
+
+
 
 
 object Variables {
@@ -1200,6 +1460,6 @@ object Variables {
 @Composable
 fun GreetingPreview() {
     SafeVault_ComposeTheme(dynamicColor = false) {
-        Setting_FaceID_Submenu()
+        Setting_Fingerprint_Auth()
     }
 }
