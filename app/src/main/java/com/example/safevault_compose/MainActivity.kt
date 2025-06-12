@@ -85,6 +85,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.materialIcon
 import androidx.compose.material3.Divider
 import kotlin.math.round
@@ -1444,7 +1445,343 @@ fun Setting_Fingerprint_Auth() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Setting_Calc_Combination() {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Setting") },
+                navigationIcon = {
+                    IconButton(onClick = { /* TODO: Back action */ }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        },
+        content = { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                    .fillMaxSize()
+            ) {
+                Spacer(modifier = Modifier.height(32.dp))
+                // Label + Icon
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Lock, // diganti
+                        contentDescription = "Lock Icon",
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = "CALCULATOR COMBINATION", // diganti
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 24.sp
+                        )
+                    )
+                }
 
+                Spacer(modifier = Modifier.height(24.dp))
+
+                FaceDataItem("Combination 1")
+                FaceDataItem("Combination 2")
+
+                Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+                Text(
+                    text = "Add calculator combination", // diganti
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { /* TODO: Add calculator combination */ }
+                        .padding(vertical = 16.dp)
+                )
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Setting_Calc_Combination_Submenu() {
+    var combination by remember { mutableStateOf("") }
+
+    val buttonSize = 72.dp
+    val calcButtons = listOf(
+        listOf("C", "⌫", "%", "÷"),
+        listOf("7", "8", "9", "×"),
+        listOf("4", "5", "6", "−"),
+        listOf("1", "2", "3", "+"),
+        listOf("🧮", "0", ".", "=")
+    )
+    TopAppBar(
+        modifier = Modifier
+            .padding(top = 5.dp),
+        title = { Text("Setting") },
+        navigationIcon = {
+            IconButton(onClick = { /* TODO: Back action */ }) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+            }
+        },
+//        actions = {
+//            IconButton(onClick = { /* TODO: Settings */ }) {
+//                Icon(Icons.Default.Delete, contentDescription = "Settings")
+//            }
+//        }
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.Start
+    ) {
+        Spacer(modifier = Modifier.height(60.dp))
+
+        // Logo
+        Image(
+            painter = painterResource(id = R.drawable.logo_safe_vault_with_text),
+            contentDescription = "Logo",
+            modifier = Modifier
+                .width(160.dp)
+                .height(48.dp)
+            ,
+            contentScale = ContentScale.Fit
+        )
+
+        Spacer(modifier = Modifier.height(162.dp))
+
+
+        // Display input
+        OutlinedTextField(
+            value = combination,
+            onValueChange = { /* tidak ada perubahan karena ini hanya tampilan */ },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .padding(start = 10.dp, end = 10.dp)
+            ,
+            textStyle = TextStyle(
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.onTertiary,
+            ),
+            readOnly = true,
+            label = { Text("Combination") }, // opsional
+            shape = RoundedCornerShape(10.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color.Gray,
+                unfocusedBorderColor = Color.LightGray,
+                disabledBorderColor = Color.LightGray
+            )
+        )
+
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Grid kalkulator
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            calcButtons.forEach { row ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    row.forEach { label ->
+                        val isOperator = label in listOf("÷", "×", "−", "+", "=", "C", "%")
+                        Button(
+                            onClick = {
+                                when (label) {
+                                    "C" -> combination = ""
+                                    "⌫" -> if (combination.isNotEmpty()) combination = combination.dropLast(1)
+                                    "=" -> {
+                                        // TODO: Validasi kombinasi
+                                    }
+                                    "🧮" -> {
+                                        // TODO: Ganti ke scientific calculator
+                                    }
+                                    else -> if (combination.length < 12) combination += label
+                                }
+                            },
+                            modifier = Modifier.size(buttonSize),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (isOperator) Color.White else Color.White
+                            ),
+                            shape = CircleShape,
+                            contentPadding = PaddingValues(0.dp)
+                        ) {
+                            when (label) {
+                                "⌫" -> Image(
+                                    painter = painterResource(id = R.drawable.delete),
+                                    contentDescription = "Delete",
+                                    modifier = Modifier.size(20.dp),
+                                    contentScale = ContentScale.Fit
+
+                                )
+                                "🧮" -> Image(
+                                    painter = painterResource(id = R.drawable.scientific),
+                                    contentDescription = "Scientific",
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                else -> Text(
+                                    text = label,
+                                    fontSize = 20.sp,
+                                    color = if (isOperator) MaterialTheme.colorScheme.primary else Color.Black
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Setting_Calc_Combination_Auth() {
+    var combination by remember { mutableStateOf("") }
+
+    val buttonSize = 72.dp
+    val calcButtons = listOf(
+        listOf("C", "⌫", "%", "÷"),
+        listOf("7", "8", "9", "×"),
+        listOf("4", "5", "6", "−"),
+        listOf("1", "2", "3", "+"),
+        listOf("🧮", "0", ".", "=")
+    )
+    TopAppBar(
+        modifier = Modifier
+            .padding(top = 5.dp),
+        title = { Text("Setting") },
+        navigationIcon = {
+            IconButton(onClick = { /* TODO: Back action */ }) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+            }
+        },
+        actions = {
+            IconButton(onClick = { /* TODO: Settings */ }) {
+                Icon(Icons.Default.Delete, contentDescription = "Delete")
+            }
+        }
+    )
+
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.Start
+    ) {
+        Spacer(modifier = Modifier.height(60.dp))
+
+        // Logo
+        Image(
+            painter = painterResource(id = R.drawable.logo_safe_vault_with_text),
+            contentDescription = "Logo",
+            modifier = Modifier
+                .width(160.dp)
+                .height(48.dp)
+            ,
+            contentScale = ContentScale.Fit
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Text(
+            text = "Enter your calculator combination to unlock SafeVault",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            fontSize = 32.sp,
+        )
+
+        Spacer(modifier = Modifier.height(52.dp))
+
+        // Display input
+        OutlinedTextField(
+            value = combination,
+            onValueChange = { /* tidak ada perubahan karena ini hanya tampilan */ },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .padding(start = 10.dp, end = 10.dp)
+            ,
+            textStyle = TextStyle(
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.onTertiary,
+            ),
+            readOnly = true,
+            label = { Text("Combination") }, // opsional
+            shape = RoundedCornerShape(10.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color.Gray,
+                unfocusedBorderColor = Color.LightGray,
+                disabledBorderColor = Color.LightGray
+            )
+        )
+
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Grid kalkulator
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            calcButtons.forEach { row ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    row.forEach { label ->
+                        val isOperator = label in listOf("÷", "×", "−", "+", "=", "C", "%")
+                        Button(
+                            onClick = {
+                                when (label) {
+                                    "C" -> combination = ""
+                                    "⌫" -> if (combination.isNotEmpty()) combination = combination.dropLast(1)
+                                    "=" -> {
+                                        // TODO: Validasi kombinasi
+                                    }
+                                    "🧮" -> {
+                                        // TODO: Ganti ke scientific calculator
+                                    }
+                                    else -> if (combination.length < 12) combination += label
+                                }
+                            },
+                            modifier = Modifier.size(buttonSize),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (isOperator) Color.White else Color.White
+                            ),
+                            shape = CircleShape,
+                            contentPadding = PaddingValues(0.dp)
+                        ) {
+                            when (label) {
+                                "⌫" -> Image(
+                                    painter = painterResource(id = R.drawable.delete),
+                                    contentDescription = "Delete",
+                                    modifier = Modifier.size(20.dp),
+                                    contentScale = ContentScale.Fit
+
+                                )
+                                "🧮" -> Image(
+                                    painter = painterResource(id = R.drawable.scientific),
+                                    contentDescription = "Scientific",
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                else -> Text(
+                                    text = label,
+                                    fontSize = 20.sp,
+                                    color = if (isOperator) MaterialTheme.colorScheme.primary else Color.Black
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 
 object Variables {
@@ -1460,6 +1797,6 @@ object Variables {
 @Composable
 fun GreetingPreview() {
     SafeVault_ComposeTheme(dynamicColor = false) {
-        Setting_Fingerprint_Auth()
+        Setting_Calc_Combination_Auth()
     }
 }
