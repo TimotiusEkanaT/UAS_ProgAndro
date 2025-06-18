@@ -1,4 +1,4 @@
-package com.example.safevault_compose.screen
+package com.example.safevault_compose.ui.screen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
