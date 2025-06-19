@@ -30,11 +30,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.safevault_compose.R
 import com.example.safevault_compose.utils.evaluateExpression
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 @Composable
-fun Calc() {
+fun Calc(navController: NavHostController) {
     var expression by remember { mutableStateOf("") }
     var result by remember { mutableStateOf("") }
     val historyList = remember { mutableStateListOf<Pair<String, String>>() }
@@ -123,11 +126,31 @@ fun Calc() {
                                     expression = expression.dropLast(1)
                                 }
                                 "=" -> {
-                                    result = evaluateExpression(expression)
-                                    if (result != "Error" && expression.isNotBlank()) {
-                                        historyList.add(expression to result)
+                                    val user = FirebaseAuth.getInstance().currentUser
+                                    val uid = user?.uid
+
+                                    if (uid != null) {
+                                        val db = FirebaseDatabase.getInstance().getReference("calculator_combination").child(uid)
+                                        db.get().addOnSuccessListener { snapshot ->
+                                            val savedCombination = snapshot.child("combination").value?.toString()
+                                            if (expression == savedCombination) {
+                                                // ✅ Kombinasi cocok, arahkan ke halaman biometric
+                                                navController.navigate("auth_biometric")
+                                            } else {
+                                                // ❌ Jika tidak cocok, lanjut hitung biasa
+                                                result = evaluateExpression(expression)
+                                                if (result != "Error" && expression.isNotBlank()) {
+                                                    historyList.add(expression to result)
+                                                }
+                                            }
+                                        }.addOnFailureListener {
+                                            result = "Error"
+                                        }
+                                    } else {
+                                        result = "Error"
                                     }
                                 }
+
                                 "🧮" -> {
                                     // Tambah aksi mode ilmiah di sini jika perlu
                                 }

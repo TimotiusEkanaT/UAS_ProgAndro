@@ -33,10 +33,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Setting_Fingerprint_Submenu() {
+fun Setting_Fingerprint_Submenu(navController: NavHostController) {
     var fingerName by remember { mutableStateOf("Thumb") }
 
     Scaffold(
@@ -101,7 +102,7 @@ fun Setting_Fingerprint_Submenu() {
                 Button(
                     onClick = { /* TODO: Delete fingerprint data */ },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.tertiary
+                        containerColor = MaterialTheme.colorScheme.secondary
                     ),
                     modifier = Modifier
                         .fillMaxWidth()

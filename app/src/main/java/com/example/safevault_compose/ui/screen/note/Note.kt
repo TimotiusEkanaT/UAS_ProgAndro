@@ -43,11 +43,12 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.safevault_compose.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Notes() {
+fun Note(navController: NavHostController) {
     var searchQuery by remember { mutableStateOf("") }
     val labels = listOf("Label", "Label", "Label", "Label", "Label", "Label")
     var selectedLabel by remember { mutableStateOf(labels[0]) }
@@ -55,7 +56,7 @@ fun Notes() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Label") },
+                title = { Text("Note") },
                 navigationIcon = {
                     IconButton(onClick = { /* TODO: Back action */ }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")

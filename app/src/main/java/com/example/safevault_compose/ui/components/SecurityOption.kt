@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 fun SecurityOption(label: String, icon: ImageVector) {
     Surface(
         shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.tertiary,
+        color = MaterialTheme.colorScheme.secondary,
         tonalElevation = 4.dp,
         modifier = Modifier
             .widthIn(min = 150.dp)

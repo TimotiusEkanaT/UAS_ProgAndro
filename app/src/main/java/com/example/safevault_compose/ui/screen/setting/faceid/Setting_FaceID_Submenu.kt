@@ -33,10 +33,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Setting_FaceID_Submenu() {
+fun Setting_FaceID_Submenu(navController: NavHostController) {
     var faceName by remember { mutableStateOf("Face 1") }
 
     Scaffold(
@@ -106,7 +107,7 @@ fun Setting_FaceID_Submenu() {
                 Button(
                     onClick = { /* TODO: Delete face data */ },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.tertiary
+                        containerColor = MaterialTheme.colorScheme.secondary
                     ),
                     modifier = Modifier
                         .fillMaxWidth()

@@ -24,11 +24,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.safevault_compose.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Setting_FaceID_Auth() {
+fun Setting_FaceID_Auth(navController: NavHostController) {
     TopAppBar(
         modifier = Modifier
             .padding(top = 5.dp),

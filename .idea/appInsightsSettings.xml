@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.safevault_compose" />
+                  <option name="mobileSdkAppId" value="1:117776475648:android:749d2c7883de11b0da1ae5" />
+                  <option name="projectId" value="safevault-951bf" />
+                  <option name="projectNumber" value="117776475648" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

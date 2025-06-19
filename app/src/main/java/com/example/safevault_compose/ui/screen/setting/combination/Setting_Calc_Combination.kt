@@ -27,11 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.safevault_compose.ui.components.FaceDataItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Setting_Calc_Combination() {
+fun Setting_Calc_Combination(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(

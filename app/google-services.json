@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "117776475648",
+    "project_id": "safevault-951bf",
+    "storage_bucket": "safevault-951bf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:117776475648:android:749d2c7883de11b0da1ae5",
+        "android_client_info": {
+          "package_name": "com.example.safevault_compose"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "117776475648-uh937ojnt0563rr42s31kigeprso9jnb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmDhFg8AFYaHZWKp7U_H-GUPKx0SNafhg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "117776475648-uh937ojnt0563rr42s31kigeprso9jnb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

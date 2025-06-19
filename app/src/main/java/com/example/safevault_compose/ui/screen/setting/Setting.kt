@@ -26,11 +26,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.safevault_compose.ui.components.SecurityOption
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun Setting() {
+fun Setting(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(

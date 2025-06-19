@@ -1,5 +1,7 @@
 package com.example.safevault_compose.ui.screen.auth
 
+import android.os.Build
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,23 +28,27 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.safevault_compose.R
+import com.google.firebase.database.FirebaseDatabase
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.tasks.await
+import androidx.compose.runtime.LaunchedEffect
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.tasks.await
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Auth_Calc_FingerPrint() {
+fun Auth_Calc_FingerPrint(navController: NavHostController) {
+    val context = LocalContext.current
+
     TopAppBar(
-        modifier = Modifier
-            .padding(top = 5.dp),
-        title = { Text("Label") },
+        modifier = Modifier.padding(top = 5.dp),
+        title = { Text("Fingerprint") },
         navigationIcon = {
-            IconButton(onClick = { /* TODO: Back action */ }) {
+            IconButton(onClick = { navController.popBackStack() }) {
                 Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-            }
-        },
-        actions = {
-            IconButton(onClick = { /* TODO: Settings */ }) {
-                Icon(Icons.Default.Settings, contentDescription = "Settings")
             }
         }
     )
@@ -55,7 +62,6 @@ fun Auth_Calc_FingerPrint() {
     ) {
         Spacer(modifier = Modifier.height(90.dp))
 
-        // Logo
         Image(
             painter = painterResource(id = R.drawable.logo_safe_vault_with_text),
             contentDescription = "Logo",
@@ -79,13 +85,45 @@ fun Auth_Calc_FingerPrint() {
 
         Image(
             painter = painterResource(id = R.drawable.fingerprint),
-            contentDescription = "face id icon",
+            contentDescription = "Fingerprint Icon",
             contentScale = ContentScale.Fit,
             modifier = Modifier
                 .width(136.dp)
                 .height(136.dp)
                 .align(Alignment.CenterHorizontally)
         )
+
+        Spacer(modifier = Modifier.height(48.dp))
+
+        Button(
+            onClick = {
+                val user = FirebaseAuth.getInstance().currentUser
+                val uid = user?.uid
+                val db = FirebaseDatabase.getInstance().reference
+
+                if (uid != null) {
+                    val data = mapOf(
+                        "uid" to uid,
+                        "email" to user.email,
+                        "deviceName" to Build.MODEL,
+                        "status" to "registered",
+                        "timestamp" to System.currentTimeMillis().toString()
+                    )
+                    db.child("biometric_fingerprint").child(uid).setValue(data)
+                        .addOnSuccessListener {
+                            Toast.makeText(context, "Fingerprint disimpan", Toast.LENGTH_SHORT).show()
+                            navController.navigate("auth_combination")
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(context, "Gagal simpan: ${it.message}", Toast.LENGTH_SHORT).show()
+                        }
+                } else {
+                    Toast.makeText(context, "User tidak ditemukan", Toast.LENGTH_SHORT).show()
+                }
+            },
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            Text("Lanjutkan")
+        }
     }
 }
-

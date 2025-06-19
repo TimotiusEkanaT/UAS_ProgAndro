@@ -39,11 +39,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.safevault_compose.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Setting_Calc_Combination_Submenu() {
+fun Setting_Calc_Combination_Submenu(navController: NavHostController) {
     var combination by remember { mutableStateOf("") }
 
     val buttonSize = 72.dp

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SafeVault_Compose</string>
+    <string name="facebook_app_id">1283534670130686</string>
+    <string name="facebook_client_token">EAASPXjQR7f4BO4yaLdAVPCiO3NrVwT4bUZBB7cWRxg4JEOxPwuQxgqSbCZAAEArIezDetlA87ExXZAf5CYCSMYMvZCTfVSvUZABljZCnBt9lWcTZAUcUk5TCQKnzFQ9DBgcy9fW79QZC1QAeZCfCOZBKhksFrc82sVUKh9X1c7ZB6XgEhauiZB1PRzaiaV7WZB8HnZCjSY1OqP3gZA6IkdRYObZAEanYWTLpJ0xGMylKQgoZC</string>
 </resources>
