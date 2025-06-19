@@ -65,7 +65,6 @@ fun Note(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                modifier = Modifier.background(Color.White),
                 title = { Text("Note") },
                 actions = {
                     IconButton(onClick = { navController.navigate("setting_combination") }) {
@@ -88,7 +87,6 @@ fun Note(navController: NavHostController) {
                 .padding(innerPadding)
                 .padding(16.dp)
                 .fillMaxSize()
-                .background(Color.White)
         ) {
 
             // Search bar
