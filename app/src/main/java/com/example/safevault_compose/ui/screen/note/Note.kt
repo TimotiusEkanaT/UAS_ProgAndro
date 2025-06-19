@@ -2,6 +2,7 @@ package com.example.safevault_compose.ui.screen.note
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -11,9 +12,11 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -62,10 +65,11 @@ fun Note(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
+                modifier = Modifier.background(Color.White),
                 title = { Text("Note") },
                 actions = {
-                    IconButton(onClick = { /* settings */ }) {
-                        Icon(Icons.Default.MoreVert, contentDescription = null)
+                    IconButton(onClick = { navController.navigate("setting_combination") }) {
+                        Icon(Icons.Default.Settings, contentDescription = "Setting")
                     }
                 }
             )
@@ -73,13 +77,19 @@ fun Note(navController: NavHostController) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate("note_detail") },
-                containerColor = MaterialTheme.colorScheme.primary
+                containerColor = MaterialTheme.colorScheme.tertiary
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Note")
             }
         }
     ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding).padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(16.dp)
+                .fillMaxSize()
+                .background(Color.White)
+        ) {
 
             // Search bar
             OutlinedTextField(

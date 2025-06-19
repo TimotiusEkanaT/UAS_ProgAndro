@@ -115,7 +115,31 @@ fun Auth_Calc_Combination(navController: NavHostController) {
                                 when (label) {
                                     "C" -> combination = ""
                                     "⌫" -> if (combination.isNotEmpty()) combination = combination.dropLast(1)
-                                    "=" -> {} // Bisa digunakan untuk validasi atau abaikan
+                                    "=" -> {
+                                        val user = FirebaseAuth.getInstance().currentUser
+                                        val uid = user?.uid
+                                        val db = FirebaseDatabase.getInstance().reference
+
+                                        if (uid != null && combination.isNotBlank()) {
+                                            val data = mapOf(
+                                                "uid" to uid,
+                                                "email" to user.email,
+                                                "deviceName" to Build.MODEL,
+                                                "combination" to combination,
+                                                "timestamp" to System.currentTimeMillis().toString()
+                                            )
+                                            db.child("calculator_combination").child(uid).setValue(data)
+                                                .addOnSuccessListener {
+                                                    Toast.makeText(context, "Combination disimpan", Toast.LENGTH_SHORT).show()
+                                                    navController.navigate("calculator")
+                                                }
+                                                .addOnFailureListener {
+                                                    Toast.makeText(context, "Gagal menyimpan: ${it.message}", Toast.LENGTH_SHORT).show()
+                                                }
+                                        } else {
+                                            Toast.makeText(context, "Kombinasi tidak boleh kosong", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
                                     "🧮" -> {}
                                     else -> if (combination.length < 12) combination += label
                                 }
@@ -147,41 +171,6 @@ fun Auth_Calc_Combination(navController: NavHostController) {
                     }
                 }
             }
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Button(
-            onClick = {
-                val user = FirebaseAuth.getInstance().currentUser
-                val uid = user?.uid
-                val db = FirebaseDatabase.getInstance().reference
-
-                if (uid != null && combination.isNotBlank()) {
-                    val data = mapOf(
-                        "uid" to uid,
-                        "email" to user.email,
-                        "deviceName" to Build.MODEL,
-                        "combination" to combination,
-                        "timestamp" to System.currentTimeMillis().toString()
-                    )
-                    db.child("calculator_combination").child(uid).setValue(data)
-                        .addOnSuccessListener {
-                            Toast.makeText(context, "Combination disimpan", Toast.LENGTH_SHORT).show()
-                            navController.navigate("calculator")
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(context, "Gagal menyimpan: ${it.message}", Toast.LENGTH_SHORT).show()
-                        }
-                } else {
-                    Toast.makeText(context, "Kombinasi tidak boleh kosong", Toast.LENGTH_SHORT).show()
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.CenterHorizontally)
-        ) {
-            Text("Lanjutkan")
         }
     }
 }

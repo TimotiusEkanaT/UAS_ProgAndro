@@ -73,8 +73,8 @@ fun Setting_FaceID(navController: NavHostController) {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Face list
-                FaceDataItem("Face 1")
-                FaceDataItem("Face 2")
+//                FaceDataItem("Face 1")
+//                FaceDataItem("Face 2")
 
                 Divider(modifier = Modifier.padding(vertical = 8.dp))
 

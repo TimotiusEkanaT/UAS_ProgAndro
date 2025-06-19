@@ -71,8 +71,8 @@ fun Setting_Fingerprint(navController: NavHostController) {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                FaceDataItem("Thumb")
-                FaceDataItem("Forefinger")
+//                FaceDataItem("Thumb")
+//                FaceDataItem("Forefinger")
 
                 Divider(modifier = Modifier.padding(vertical = 8.dp))
 

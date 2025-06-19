@@ -57,7 +57,10 @@ fun AppNavHost(
         // Setting - Combination
         composable("setting_combination") { Setting_Calc_Combination(navController) }
         composable("setting_combination_auth") { Setting_Calc_Combination_Auth(navController) }
-        composable("setting_combination_submenu") { Setting_Calc_Combination_Submenu(navController) }
+        composable("setting_combination_submenu?id={id}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            Setting_Calc_Combination_Submenu(navController, id)
+        }
 
         // Setting - Face ID
         composable("setting_faceid") { Setting_FaceID(navController) }
