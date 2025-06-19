@@ -1,160 +1,110 @@
+// Notes_Detail.kt
 package com.example.safevault_compose.ui.screen.note
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.isImeVisible
-import androidx.compose.foundation.layout.padding
+import android.widget.Toast
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.AttachFile
-import androidx.compose.material.icons.filled.CheckBox
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.Photo
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.safevault_compose.model.NoteModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Notes_Detail(navController: NavHostController) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
+fun Notes_Detail(navController: NavHostController, noteId: String? = null) {
     val context = LocalContext.current
+    val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
-    var noteText by remember { mutableStateOf("") }
-    var showFabMenu by remember { mutableStateOf(false) }
+    var title by remember { mutableStateOf("") }
+    var content by remember { mutableStateOf("") }
+    var label by remember { mutableStateOf("General") }
 
-    val fabItems = listOf(
-        "Voice Note" to Icons.Default.Mic,
-        "Photo" to Icons.Default.Photo,
-        "Checkboxes" to Icons.Default.CheckBox
-    )
+    val noteRef = FirebaseDatabase.getInstance().getReference("notes").child(uid)
 
-    val keyboardVisible = WindowInsets.isImeVisible
+    // If editing existing note
+    LaunchedEffect(noteId) {
+        if (noteId != null) {
+            noteRef.child(noteId).get().addOnSuccessListener { snapshot ->
+                val note = snapshot.getValue(NoteModel::class.java)
+                if (note != null) {
+                    title = note.title
+                    content = note.content
+                    label = note.label
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Title") },
+                title = { Text(if (noteId != null) "Edit Note" else "New Note") },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        focusManager.clearFocus()
-                        keyboardController?.hide()
-                    }) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
         },
-        floatingActionButton = {
-            Column(horizontalAlignment = Alignment.End) {
-                AnimatedVisibility(visible = showFabMenu) {
-                    Column {
-                        fabItems.forEach { (label, icon) ->
-                            ExtendedFloatingActionButton(
-                                text = { Text(label) },
-                                icon = { Icon(icon, contentDescription = label) },
-                                onClick = { /* TODO: Handle action */ },
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
-                        }
-                    }
-                }
-
-                FloatingActionButton(
-                    onClick = { showFabMenu = !showFabMenu },
-                    containerColor = MaterialTheme.colorScheme.secondary
-                ) {
-                    Icon(
-                        imageVector = if (showFabMenu) Icons.Default.Close else Icons.Default.AttachFile,
-                        contentDescription = "Menu"
-                    )
-                }
-            }
-        },
         bottomBar = {
-            if (!keyboardVisible) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Button(
-                        onClick = { /* Save logic */ },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary
-                        )
-                    ) {
-                        Text("Save")
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(onClick = {
+                    val note = NoteModel(title, content, label)
+                    val targetRef = if (noteId != null) noteRef.child(noteId) else noteRef.push()
+                    targetRef.setValue(note).addOnSuccessListener {
+                        Toast.makeText(context, "Note saved", Toast.LENGTH_SHORT).show()
+                        navController.popBackStack()
                     }
+                }) {
+                    Text("Save")
+                }
 
-                    OutlinedButton(
-                        onClick = { /* Cancel logic */ },
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.secondary
-                        ),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary)
-                    ) {
-                        Text("Cancel")
-                    }
+                OutlinedButton(onClick = { navController.popBackStack() }) {
+                    Text("Cancel")
                 }
             }
         }
-        ,
-        content = { innerPadding ->
-            Column(
+    ) { innerPadding ->
+        Column(modifier = Modifier
+            .padding(innerPadding)
+            .padding(16.dp)
+            .fillMaxSize(),
+        ) {
+            OutlinedTextField(
+                value = title,
+                onValueChange = { title = it },
+                label = { Text("Title") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedTextField(
+                value = content,
+                onValueChange = { content = it },
+                label = { Text("Content") },
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(16.dp)
-            ) {
-                TextField(
-                    value = noteText,
-                    onValueChange = { noteText = it },
-                    placeholder = { Text("Start writing your note...") },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Transparent)
-                        .weight(1f),
-                    singleLine = false,
-//                    shape = RoundedCornerShape(16.dp),
-                    maxLines = Int.MAX_VALUE
-                )
-            }
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedTextField(
+                value = label,
+                onValueChange = { label = it },
+                label = { Text("Label") },
+                modifier = Modifier.fillMaxWidth()
+            )
         }
-    )
+    }
 }

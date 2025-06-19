@@ -9,24 +9,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.safevault_compose.ui.screen.auth.*
+import com.example.safevault_compose.ui.screen.calculator.Calc
 import com.example.safevault_compose.ui.screen.note.Note
 import com.example.safevault_compose.ui.screen.note.Notes_Detail
-import com.example.safevault_compose.ui.screen.auth.Auth_Calc
-import com.example.safevault_compose.ui.screen.auth.Auth_Calc_Biometric
-import com.example.safevault_compose.ui.screen.auth.Auth_Calc_Combination
-import com.example.safevault_compose.ui.screen.auth.Auth_Calc_FingerPrint
-import com.example.safevault_compose.ui.screen.auth.Auth_Register
-import com.example.safevault_compose.ui.screen.calculator.Calc
 import com.example.safevault_compose.ui.screen.setting.Setting
-import com.example.safevault_compose.ui.screen.setting.combination.Setting_Calc_Combination
-import com.example.safevault_compose.ui.screen.setting.combination.Setting_Calc_Combination_Auth
-import com.example.safevault_compose.ui.screen.setting.combination.Setting_Calc_Combination_Submenu
-import com.example.safevault_compose.ui.screen.setting.faceid.Setting_FaceID
-import com.example.safevault_compose.ui.screen.setting.faceid.Setting_FaceID_Auth
-import com.example.safevault_compose.ui.screen.setting.faceid.Setting_FaceID_Submenu
-import com.example.safevault_compose.ui.screen.setting.fingerprint.Setting_Fingerprint
-import com.example.safevault_compose.ui.screen.setting.fingerprint.Setting_Fingerprint_Auth
-import com.example.safevault_compose.ui.screen.setting.fingerprint.Setting_Fingerprint_Submenu
+import com.example.safevault_compose.ui.screen.setting.combination.*
+import com.example.safevault_compose.ui.screen.setting.faceid.*
+import com.example.safevault_compose.ui.screen.setting.fingerprint.*
 import com.example.safevault_compose.ui.theme.SafeVault_ComposeTheme
 
 @Composable
@@ -46,7 +36,6 @@ fun AppNavHost(
             if (activity != null) {
                 Auth_Calc_Biometric(navController, activity)
             } else {
-                // Bisa tampilkan error screen atau log
                 Text("Tidak dapat menampilkan autentikasi biometrik. Aktivitas tidak valid.")
             }
         }
@@ -57,7 +46,10 @@ fun AppNavHost(
 
         // Vault - Notes
         composable("note") { Note(navController) }
-        composable("note_detail") { Notes_Detail(navController) }
+        composable("note_detail?id={id}") { backStackEntry ->
+            val noteId = backStackEntry.arguments?.getString("id")
+            Notes_Detail(navController, noteId)
+        }
 
         // Setting
         composable("setting") { Setting(navController) }

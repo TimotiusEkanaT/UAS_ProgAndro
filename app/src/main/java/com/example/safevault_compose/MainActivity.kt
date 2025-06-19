@@ -2,8 +2,9 @@ package com.example.safevault_compose
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity // ⬅️ Ganti dari ComponentActivity
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.fragment.app.FragmentActivity
 import com.example.safevault_compose.navigation.AppNavHost
 import com.example.safevault_compose.ui.theme.SafeVault_ComposeTheme
 import com.example.safevault_compose.utils.SecurePrefs
@@ -11,8 +12,12 @@ import com.facebook.CallbackManager
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.*
+import kotlinx.coroutines.tasks.await
 
-class MainActivity : FragmentActivity() { // ⬅️ Ganti ke FragmentActivity
+class MainActivity : FragmentActivity() {
 
     companion object {
         lateinit var callbackManager: CallbackManager
@@ -21,23 +26,37 @@ class MainActivity : FragmentActivity() { // ⬅️ Ganti ke FragmentActivity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Inisialisasi Facebook SDK
+        // Inisialisasi Facebook & Firebase
         FacebookSdk.sdkInitialize(applicationContext)
         AppEventsLogger.activateApp(application)
         callbackManager = CallbackManager.Factory.create()
-
-        // Inisialisasi Firebase
         FirebaseApp.initializeApp(this)
-        val context = this
-        val startDestination = if (SecurePrefs.isLoggedIn(context)) {
-            "auth_faceid"
-        } else {
-            "auth_calc"
-        }
 
-        setContent {
-            SafeVault_ComposeTheme {
-                AppNavHost(startDestination = startDestination)
+        val context = this
+
+        // Cek login dan status kombinasi di Firebase
+        CoroutineScope(Dispatchers.Main).launch {
+            val user = FirebaseAuth.getInstance().currentUser
+            var startDestination = "auth_calc"
+
+            if (user != null) {
+                val uid = user.uid
+                val db = FirebaseDatabase.getInstance().reference
+                val combinationSnapshot = withContext(Dispatchers.IO) {
+                    db.child("calculator_combination").child(uid).get().await()
+                }
+
+                startDestination = if (combinationSnapshot.exists()) {
+                    "calculator"
+                } else {
+                    "auth_combination"
+                }
+            }
+
+            setContent {
+                SafeVault_ComposeTheme {
+                    AppNavHost(startDestination = startDestination)
+                }
             }
         }
     }
