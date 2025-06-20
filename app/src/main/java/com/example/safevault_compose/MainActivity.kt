@@ -67,3 +67,4 @@ class MainActivity : FragmentActivity() {
         callbackManager.onActivityResult(requestCode, resultCode, data)
     }
 }
+
