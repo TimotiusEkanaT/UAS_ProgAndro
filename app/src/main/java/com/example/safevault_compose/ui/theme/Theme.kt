@@ -8,7 +8,6 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.example.safevault_compose.ui.theme.Grey
 import com.example.safevault_compose.ui.theme.Orange
@@ -22,7 +21,7 @@ private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
     tertiary = Orange,
-    background = Color.White,
+    background = Grey,
     outline = Stroke,
 )
 
@@ -30,7 +29,7 @@ private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
     tertiary = Orange,
-    background = Color.White,
+    background = Grey,
     outline = Stroke,
 
     /* Other default colors to override
